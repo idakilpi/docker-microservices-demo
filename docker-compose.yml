@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+
+  notes-api:
+    build: ./notes-api
+    ports:
+      - "8000:8000"

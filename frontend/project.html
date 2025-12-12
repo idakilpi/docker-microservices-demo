@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Miten Docker-projektimme toimii</title>
+</head>
+<body>
+
+<nav>
+    <a href="index.html">Etusivu</a> |
+    <a href="project.html">Miten projektimme toimii</a> |
+    <a href="opinions.html">Mielipiteemme Dockerista</a>
+</nav>
+
+<h1>Miten Docker-projektimme toimii</h1>
+
+<p>Tämä sivu selittää lyhyesti miten koko projektimme toimii Dockerin sisällä.</p>
+
+<h2>1. Frontend</h2>
+<p>
+Frontend on yksinkertainen staattinen Nginx-palvelin, joka näyttää HTML-sivuja.
+Dockerfile kopioi vain HTML-tiedoston ja avaa portin 80. Jiska tulee lisäämään omia hommian ja lisätään sitten tälle sivulla tietoa.
+</p>
+
+<h2>2. Notes-API</h2>
+<p>
+Backend-palvelu on tehty FastAPI:lla.  
+Palvelu pyörii Uvicorn-palvelimella ja kuuntelee porttia 8000.
+</p>
+
+<h2>3. Proxy (Traefik)</h2>
+<p>
+Traefik toimii käänteisenä proxyna.  
+Se ohjaa liikennettä eri konttien välillä ja voi hallita myöhemmin myös SSL/TLS-sertifikaatteja. Ei tällä hetkellä mukana projektissa vielä, koska windows ei halua tehdä yhteistyötä D:
+</p>
+
+<h2>4. Docker Compose</h2>
+<p>
+Kaikki palvelut käynnistetään yhdellä komennolla:
+</p>
+
+<pre>
+docker compose up --build (tarkista, että docker desktop on päällä!)
+</pre>
+
+</body>
+</html>
