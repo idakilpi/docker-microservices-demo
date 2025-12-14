@@ -1,37 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mielipiteitämme Dockerista</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
 </head>
 <body>
 
-<nav>
-    <a href="index.html">Etusivu</a> |
-    <a href="project.html">Miten projektimme toimii</a> |
-    <a href="opinions.html">Mielipiteemme Dockerista</a>
+<nav class="container-fluid">
+    <ul>
+        <li><strong>🐳 Docker-Projekti</strong></li>
+    </ul>
+    <ul>
+        <li><a href="index.html">Etusivu</a></li>
+        <li><a href="project.html">Sovellusdemo</a></li>
+        <li><a href="opinions.html" role="button" class="secondary">Mielipiteet</a></li>
+    </ul>
 </nav>
 
-<h1>Mielipiteitämme Dockerista</h1>
+<main class="container">
+    <hgroup>
+        <h1>Mielipiteet & Oppiminen</h1>
+        <h2>Mitä jäi käteen tästä projektista?</h2>
+    </hgroup>
 
-<p>Tällä sivulla on mielipiteet dockerista.</p>
+    <div class="grid">
+        
+        <article>
+            <header><strong>Mitä opimme projektissa?</strong></header>
+        </article>
 
-<h2>Mitä ajattelemme Dockerista?</h2>
-<p>
-Pyysin chatGPT:tä keskimään tittelit mitä voisi olla mielipide sivulla, voidaan pitää tai poistaa nää
-</p>
+        <article>
+            <header><strong>Mitä ajattelemme Dockerista?</strong></header>
+        </article>
 
-<h2>Mitä opimme projektissa?</h2>
-<ul>
-    <li>Kuinka frontend, backend ja reverse proxy toimivat yhdessä.</li>
-    <li>Miten Dockerfile rakennetaan eri teknologioille.</li>
-    <li>Miten Compose yhdistää eri kontit hallituksi kokonaisuudeksi.</li>
-</ul>
-
-<h2>Yleinen fiilis projektista</h2>
-<p>
-Tähän fiilikset
-</p>
-
+        <article>
+        <header><strong>Yleinen fiilis projektista</strong></header>
+        </article>
+    </div>
+</main>
+<footer class="container">
+    <small>Ryhmä Pilvi A Docker-harjoitustyö 2025</small>
+</footer>
 </body>
 </html>

@@ -1,20 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Docker Esittely</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Pieni oma hienosäätö otsikolle */
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+            background-color: #11191f;
+            background-image: url('https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png'); /* Docker logo taustalle */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-size: contain;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        .hero h1 { color: white; font-size: 3rem; }
+        .hero p { color: #ccc; font-size: 1.5rem; }
+    </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav>
-    <a href="index.html">Etusivu</a> |
-    <a href="project.html">Miten projektimme toimii</a> |
-    <a href="opinions.html">Mielipiteemme Dockerista</a>
+<nav class="container-fluid">
+    <ul>
+        <li><strong>🐳 Docker-Projekti</strong></li>
+    </ul>
+    <ul>
+        <li><a href="index.html" role="button" class="secondary">Etusivu</a></li>
+        <li><a href="project.html">Sovellusdemo</a></li>
+        <li><a href="opinions.html">Mielipiteet</a></li>
+    </ul>
 </nav>
 
-<h1>TOSI kivaa tekstiä!</h1>
-<p>Tällä sivustolla pääset selvittämään miten Docker on niin hauska eikä yhtään vittuile sinulle :D.</p>
+<main class="container">
+    <div class="hero">
+        <h1>Tervetuloa kontteihin!</h1>
+        <p>Projektimme demonstroi Dockerin, Nginxin ja FastAPI:n yhteistyötä.</p>
+    </div>
+
+    <div class="grid">
+        <article>
+            <header>🚀 <strong>Nopea</strong></header>
+            Tämä sivu latautuu ripeästi, koska se on staattista HTML:ää Nginx-kontista.
+        </article>
+        <article>
+            <header>🔧 <strong>Tekninen</strong></header>
+            Backendinä käytämme Python FastAPI:a.
+        </article>
+        <article>
+            <header>📦 <strong>Paketoitu</strong></header>
+            Koko ympäristö nousee pystyyn komennolla: <code>docker compose up</code>.
+        </article>
+    </div>
+</main>
+
+<footer class="container">
+    <small>Ryhmä Pilvi A Docker-harjoitustyö 2025</small>
+</footer>
 
 </body>
 </html>

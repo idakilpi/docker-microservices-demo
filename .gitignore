@@ -1,0 +1,12 @@
+# Jätetään pois Pythonin roskat ja virtuaaliympäristöt
+__pycache__
+*.pyc
+venv/
+env/
+.pytest_cache/
+
+# Jätetään pois ympäristömuuttujat (tietoturva!)
+.env
+
+# Jätetään pois tietokantatiedostot (Data pysyy omalla koneella)
+notes-data/

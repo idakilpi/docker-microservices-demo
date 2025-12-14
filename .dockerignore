@@ -1,0 +1,21 @@
+# Git-tiedostot
+.git
+.gitignore
+
+# Docker-konfiguraatiot ja env-tiedostot (ei haluta imageen)
+docker-compose.yml
+.env
+Dockerfile*
+
+# Python-tiedostot
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.pytest_cache/
+
+# Datakansiot (nämä mountataan volumella, ei kopioida imageen)
+notes-data/

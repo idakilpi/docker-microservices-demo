@@ -1,47 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
     <meta charset="UTF-8">
-    <title>Miten Docker-projektimme toimii</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Muistiinpanosovellus</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        .note-item {
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+        .note-item:last-child {
+            border-bottom: none;
+        }
+        #notes-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .delete-btn {
+            float: right;
+            cursor: pointer;
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.2rem;
+            line-height: 1;
+            margin-left: 10px;
+            transition: transform 0.2s;
+        }
+        .delete-btn:hover {
+            color: #ff0000;
+            transform: scale(1.2);
+        }
+        /* Tehdään poistonapista modaalissa punainen */
+        .btn-danger {
+            background-color: #c92a2a;
+            border-color: #c92a2a;
+        }
+        .btn-danger:hover {
+            background-color: #e03131;
+            border-color: #e03131;
+        }
+    </style>
 </head>
 <body>
 
-<nav>
-    <a href="index.html">Etusivu</a> |
-    <a href="project.html">Miten projektimme toimii</a> |
-    <a href="opinions.html">Mielipiteemme Dockerista</a>
+<nav class="container-fluid">
+    <ul>
+        <li><strong>🐳 Docker-Projekti</strong></li>
+    </ul>
+    <ul>
+        <li><a href="index.html">Etusivu</a></li>
+        <li><a href="project.html" role="button">Sovellusdemo</a></li>
+        <li><a href="opinions.html">Mielipiteet</a></li>
+    </ul>
 </nav>
 
-<h1>Miten Docker-projektimme toimii</h1>
+<main class="container">
+    <hgroup>
+        <h1>Muistiinpanot</h1>
+        <h2>Frontendin ja Backendin välinen kommunikaatio</h2>
+    </hgroup>
 
-<p>Tämä sivu selittää lyhyesti miten koko projektimme toimii Dockerin sisällä.</p>
+    <div class="grid">
+        
+        <div>
+            <article>
+                <header><strong>✍️ Uusi muistiinpano</strong></header>
+                <form onsubmit="event.preventDefault(); sendNote();">
+                    <label for="titleInput">Otsikko</label>
+                    <input type="text" id="titleInput" placeholder="Mistä on kyse?" required>
+                    
+                    <label for="bodyInput">Sisältö</label>
+                    <textarea id="bodyInput" placeholder="Kirjoita ajatuksesi tähän..." required style="height: 150px;"></textarea>
+                    
+                    <button type="submit">Tallenna muistiinpano</button>
+                </form>
+            </article>
 
-<h2>1. Frontend</h2>
-<p>
-Frontend on yksinkertainen staattinen Nginx-palvelin, joka näyttää HTML-sivuja.
-Dockerfile kopioi vain HTML-tiedoston ja avaa portin 80. Jiska tulee lisäämään omia hommian ja lisätään sitten tälle sivulla tietoa.
-</p>
+            <details>
+                <summary>Miten poisto toimii?</summary>
+                <p><small>Kun painat rasti-nappia, sivu avaa modaali-ikkunan. Jos vahvistat poiston, JavaScript lähettää <code>DELETE</code>-pyynnön API:lle. ID tallennetaan väliaikaisesti muistiin modaalin aukiolon ajaksi.</small></p>
+            </details>
+        </div>
 
-<h2>2. Notes-API</h2>
-<p>
-Backend-palvelu on tehty FastAPI:lla.  
-Palvelu pyörii Uvicorn-palvelimella ja kuuntelee porttia 8000.
-</p>
+        <div>
+            <article>
+                <header><strong>📂 Tallennetut viestit</strong></header>
+                <div id="notes-list">
+                    <p aria-busy="true">Ladataan viestejä...</p>
+                </div>
+            </article>
+        </div>
 
-<h2>3. Proxy (Traefik)</h2>
-<p>
-Traefik toimii käänteisenä proxyna.  
-Se ohjaa liikennettä eri konttien välillä ja voi hallita myöhemmin myös SSL/TLS-sertifikaatteja. Ei tällä hetkellä mukana projektissa vielä, koska windows ei halua tehdä yhteistyötä D:
-</p>
+    </div>
+</main>
 
-<h2>4. Docker Compose</h2>
-<p>
-Kaikki palvelut käynnistetään yhdellä komennolla:
-</p>
+<dialog id="delete-modal">
+    <article>
+        <header>
+            <a href="#close" aria-label="Close" class="close" onclick="closeModal()"></a>
+             Vahvista poisto
+        </header>
+        <p>
+            Haluatko varmasti poistaa tämän muistiinpanon? 
+            <br>
+            <small>Tätä toimintoa ei voi peruuttaa.</small>
+        </p>
+        <footer>
+            <a href="#" role="button" class="secondary" onclick="closeModal()">Peruuta</a>
+            <a href="#" role="button" class="btn-danger" onclick="confirmDelete()">Poista lopullisesti</a>
+        </footer>
+    </article>
+</dialog>
 
-<pre>
-docker compose up --build (tarkista, että docker desktop on päällä!)
-</pre>
+<script>
+    const API_URL = "/api/notes";
+    
+    // Muuttuja johon tallennetaan poistettavan viestin ID väliaikaisesti
+    let noteIdToDelete = null;
 
+    async function fetchNotes() {
+        const listDiv = document.getElementById("notes-list");
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error("Yhteysvirhe");
+            const notes = await response.json();
+            
+            listDiv.innerHTML = ""; 
+
+            if (notes.length === 0) {
+                listDiv.innerHTML = "<div class='note-item'><em>Ei muistiinpanoja vielä.</em></div>";
+                return;
+            }
+
+            notes.forEach(note => {
+                const div = document.createElement("div");
+                div.className = "note-item";
+                
+                // Kun painetaan rastia, kutsutaan openDeleteModal-funktiota ID:n kanssa
+                div.innerHTML = `
+                    <span class="delete-btn" onclick="openDeleteModal('${note.id}')" title="Poista">&times;</span>
+                    <h5 style="margin-bottom: 0.5rem;">${escapeHtml(note.title)}</h5>
+                    <p style="margin-bottom: 0; color: #bbb;">${escapeHtml(note.body)}</p>
+                `;
+                listDiv.appendChild(div);
+            });
+        } catch (error) {
+            console.error(error);
+            listDiv.innerHTML = "<div class='note-item' style='color: tomato;'>Yhteysvirhe backendiin! Onko Docker päällä?</div>";
+        }
+    }
+
+    async function sendNote() {
+        const titleInput = document.getElementById("titleInput");
+        const bodyInput = document.getElementById("bodyInput");
+        const btn = document.querySelector("button[type='submit']");
+        
+        const originalText = btn.innerText;
+        btn.setAttribute("aria-busy", "true");
+        btn.innerText = "Tallennetaan...";
+
+        try {
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: titleInput.value, body: bodyInput.value })
+            });
+            titleInput.value = "";
+            bodyInput.value = "";
+            fetchNotes(); 
+        } catch (error) {
+            alert("Tallennus epäonnistui!");
+        } finally {
+            btn.removeAttribute("aria-busy");
+            btn.innerText = originalText;
+        }
+    }
+
+    // --- MODAALIN LOGIIKKA ---
+
+    // 1. Avaa modaali ja tallenna ID
+    function openDeleteModal(id) {
+        noteIdToDelete = id;
+        document.getElementById("delete-modal").setAttribute("open", "true");
+    }
+
+    // 2. Sulje modaali ja nollaa ID
+    function closeModal() {
+        noteIdToDelete = null;
+        document.getElementById("delete-modal").removeAttribute("open");
+    }
+
+    // 3. Suorita poisto (kutsutaan modaalin "Poista"-napista)
+    async function confirmDelete() {
+        if (!noteIdToDelete) return; // Varmistus
+
+        const modalBtn = document.querySelector(".btn-danger");
+        const originalText = modalBtn.innerText;
+        modalBtn.setAttribute("aria-busy", "true"); // Latausanimaatio nappiin
+
+        try {
+            const response = await fetch(`${API_URL}/${noteIdToDelete}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                closeModal(); // Sulje ikkuna ensin
+                fetchNotes(); // Päivitä lista
+            } else {
+                alert("Poisto epäonnistui backendissä.");
+                closeModal();
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+            alert("Virhe poistettaessa.");
+            closeModal();
+        } finally {
+            modalBtn.removeAttribute("aria-busy");
+            modalBtn.innerText = originalText;
+        }
+    }
+
+    function escapeHtml(text) {
+        if (!text) return text;
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    fetchNotes();
+</script>
+<footer class="container">
+    <small>Ryhmä Pilvi A Docker-harjoitustyö 2025</small>
+</footer>
 </body>
 </html>
