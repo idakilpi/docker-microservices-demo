@@ -2,33 +2,43 @@
 
 Tämä projekti on **mikropalveluarkkitehtuuria** hyödyntävä harjoitustyö, jonka tavoitteena on demonstroida **Dockerin**, **Docker Composen** ja konttien välistä orkestrointia.
 
+Sovellus koostuu kahdesta osasta:
+1. **Etusivu:** Tekninen dokumentaatio, arkkitehtuurikuvaus ja interaktiivinen terminaali-demo.
+2. **Muistiinpanosovellus:** Toimiva demo, jossa käyttäjä voi luoda ja poistaa muistiinpanoja.
+
 Sovellus on yksinkertainen **muistiinpanoalusta**, jossa käyttäjä voi **luoda, lukea ja poistaa muistiinpanoja**. Data säilyy pysyvästi, vaikka kontit sammutettaisiin.
 
 ---
 
 ## Arkkitehtuuri ja teknologiat
 
-Järjestelmä koostuu kahdesta pääkontista, jotka keskustelevat keskenään Dockerin sisäverkossa.
+Järjestelmä koostuu kolmesta pääkontista, jotka keskustelevat keskenään Dockerin sisäverkossa.
 
-### 1. Frontend & Reverse Proxy (Nginx)
+### 1. Reverse Proxy (Traefik)
+
+* **Teknologia:** Traefik
+* **Rooli:** Liikenteenohjaus (Load Balancer / Router)
+* **Toiminnallisuus:**
+  * Ottaa vastaan kaiken liikenteen portista 80 (tai 8080).
+  * Ohjaa `/api`-pyynnöt Backendille.
+  * Ohjaa muut pyynnöt Frontendille.
+
+### 2. Frontend (Nginx)
 
 * **Teknologia:** Nginx (Alpine Linux), HTML5, Vanilla JS, [Pico.css](https://picocss.com)
-* **Rooli:** Toimii sovelluksen julkisivuna (portti 80)
+* **Rooli:** Staattisen sisällön tarjoaja
 * **Toiminnallisuus:**
+  * Tarjoilee verkkosivut (`index.html` ja `project.html`).
+  * Sisältää visuaalisen esityksen arkkitehtuurista.
 
-  * Tarjoilee staattiset sivut käyttäjälle
-  * Toimii **reverse proxyna** ja ohjaa `/api/`-alkuiset pyynnöt taustalla olevalle backendille
-  * Estää suoran pääsyn backendiin julkisesta verkosta
-
-### 2. Backend (FastAPI)
+### 3. Backend (FastAPI)
 
 * **Teknologia:** Python 3.11, FastAPI, Uvicorn
-* **Rooli:** REST API (portti 8000, vain sisäverkossa)
+* **Rooli:** REST API (sisäverkossa)
 * **Toiminnallisuus:**
-
-  * Käsittelee datan (CRUD-operaatiot)
-  * Generoi uniikit ID:t (UUID) muistiinpanoille
-  * Tallentaa tiedot JSON-muodossa levylle
+  * Käsittelee datan (CRUD-operaatiot).
+  * Generoi uniikit ID:t (UUID) muistiinpanoille.
+  * Tallentaa tiedot JSON-muodossa levylle.
 
 ### Datan pysyvyys (Persistence)
 
@@ -87,10 +97,10 @@ BACKEND_PORT=8000
 
 ```
 .
-├── frontend/             # Frontendin lähdekoodi & Nginx-konfiguraatio
+├── frontend/             # Frontendin lähdekoodi (HTML, CSS, Kuvat) & Nginx-konfiguraatio
 ├── notes-api/            # Backendin (FastAPI) lähdekoodi
-├── notes-data/           # Pysyvä data (Docker luo automaattisesti)
-├── docker-compose.yml    # Koko järjestelmän orkestrointi
+├── notes-data/           # Pysyvä data (JSON-tiedostot)
+├── docker-compose.yml    # Koko järjestelmän orkestrointi ja Traefik-asetukset
 └── README.md             # Tämä tiedosto
 ```
 

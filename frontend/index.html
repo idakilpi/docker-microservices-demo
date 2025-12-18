@@ -20,6 +20,58 @@
         }
         .hero h1 { color: white; font-size: 3rem; }
         .hero p { color: #ccc; font-size: 1.5rem; }
+
+        /* --- OSIOIDEN EROTTELU --- */
+        section {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid #333;
+        }
+        h2, h3 { text-align: center; margin-bottom: 30px; }
+
+        /* --- KUVAT JA LOGOT --- */
+        .image-container { text-align: center; margin-bottom: 40px; }
+        .project-image {
+            max-width: 100%; height: auto; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: white; padding: 5px;
+        }
+        .image-caption { text-align: center; font-style: italic; color: #888; margin-top: 10px; }
+
+        .tech-stack-container {
+            background-color: #1a1a1a; padding: 30px; border-radius: 12px;
+            margin: 40px 0; text-align: center; border: 1px solid #333;
+        }
+        .tech-icons {
+            display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; margin-top: 20px;
+        }
+        .tech-item { display: flex; flex-direction: column; align-items: center; width: 80px; }
+        .tech-item img {
+            width: 50px; height: 50px; margin-bottom: 10px; transition: transform 0.2s;
+        }
+        .tech-item:hover img { transform: scale(1.2); }
+
+        /* --- TERMINAALI --- */
+        .terminal-window {
+            background-color: #1e1e1e; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            overflow: hidden; font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem; border: 1px solid #333; text-align: left;
+        }
+        .terminal-header {
+            background-color: #2d2d2d; padding: 10px 15px;
+            display: flex; align-items: center; border-bottom: 1px solid #333;
+        }
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .red { background-color: #ff5f56; }
+        .yellow { background-color: #ffbd2e; }
+        .green { background-color: #27c93f; }
+        .terminal-body { padding: 20px; color: #d4d4d4; line-height: 1.5; }
+        .command-line { margin-bottom: 10px; }
+        .prompt { color: #27c93f; margin-right: 10px; }
+        .command { color: #fff; font-weight: bold; }
+        .output { color: #aaa; margin-top: 15px; font-size: 0.85rem; }
+        .success { color: #27c93f; }
     </style>
 </head>
 <body>
@@ -54,6 +106,63 @@
             Koko ympäristö nousee pystyyn komennolla: <code>docker compose up</code>.
         </article>
     </div>
+
+    <section>
+        <h2>Järjestelmän Arkkitehtuuri</h2>
+
+        <div class="image-container">
+            <img src="images/architecture.png" alt="Arkkitehtuurikaavio" class="project-image">
+            <p class="image-caption">Palveluiden välisen liikenteen toiminta.</p>
+        </div>
+
+        <div class="tech-stack-container">
+            <h3>Teknologiat</h3>
+            <div class="tech-icons">
+                <div class="tech-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker"><span>Docker</span></div>
+                <div class="tech-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"><span>Python</span></div>
+                <div class="tech-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="FastAPI"><span>FastAPI</span></div>
+                <div class="tech-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg" alt="Nginx"><span>Nginx</span></div>
+                <div class="tech-item"><img src="https://doc.traefik.io/traefik/assets/img/traefik-logo.svg" alt="Traefik"><span>Traefik</span></div>
+            </div>
+        </div>
+        <div class="image-container">
+            <h4>Orkestrointi (docker-compose.yml)</h4>
+            <img src="images/code-snippet.png" alt="Koodiesimerkki" class="project-image">
+            <p class="image-caption">Ote konfiguraatiosta, joka sitoo palvelut yhteen.</p>
+        </div>
+    </section>
+
+    <section>
+        <header>
+            <h3>🚀 Pika-aloitusopas</h3>
+        </header>
+        <div class="grid">
+            <div>
+                <p>Olet nyt sisällä <strong>Nginx-kontissa</strong>. Tämä sivu tarjoillaan portissa 80.</p>
+                <p>Taustalla pyörivät palvelut on määritelty <code>docker-compose.yml</code> -tiedostossa, ja ne kommunikoivat sisäisessä verkossa.</p>
+            </div>
+            <div>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span style="margin-left: 10px; color: #999; font-size: 0.8rem;">PowerShell</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="command-line">
+                            <span class="prompt">user@pc:~$</span> <span class="command">docker-compose up --build</span>
+                        </div>
+                        <div class="output">
+                            Building frontend... done<br>
+                            Building backend... done<br>
+                            Creating network "app-net"... done<br>
+                            <span class="success">✔ Server running at localhost:80</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <footer class="container">
